@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.api.deps import get_current_user
+from app.api.v1.demo import enforce_demo_chat_quota
 from app.db.session import get_db
 from app.models.chat import Conversation, Message
 from app.models.upload import LogEvent, Upload
@@ -54,6 +55,7 @@ async def chat(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> StreamingResponse:
+    await enforce_demo_chat_quota(db, user)
     if payload.conversation_id is not None:
         conversation = await db.get(Conversation, payload.conversation_id)
         if conversation is None or conversation.user_id != user.id:

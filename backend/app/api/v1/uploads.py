@@ -42,7 +42,8 @@ async def create_upload(
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest = dest_dir / f"{upload_id}{ext}"
 
-    max_bytes = settings.max_upload_mb * 1024 * 1024
+    max_mb = settings.demo_max_upload_mb if settings.demo_mode else settings.max_upload_mb
+    max_bytes = max_mb * 1024 * 1024
     size = 0
     async with await anyio.open_file(dest, "wb") as out:
         while chunk := await file.read(CHUNK_SIZE):
@@ -52,7 +53,7 @@ async def create_upload(
                 dest.unlink(missing_ok=True)
                 raise HTTPException(
                     status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                    f"File exceeds {settings.max_upload_mb} MB limit",
+                    f"File exceeds {max_mb} MB limit",
                 )
             await out.write(chunk)
     if size == 0:

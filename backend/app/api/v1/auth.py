@@ -3,6 +3,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.config import get_settings
 from app.core.security import create_access_token, hash_password, verify_password
 from app.db.session import get_db
 from app.models.user import User
@@ -13,6 +14,11 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", response_model=TokenOut, status_code=status.HTTP_201_CREATED)
 async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)) -> TokenOut:
+    if get_settings().demo_mode:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            "Registration is disabled in demo mode. Use 'Launch demo' to start a session.",
+        )
     existing = await db.scalar(select(User).where(User.email == payload.email.lower()))
     if existing is not None:
         raise HTTPException(status.HTTP_409_CONFLICT, "Email already registered")

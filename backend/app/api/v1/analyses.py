@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.api.v1.demo import enforce_demo_analysis_quota
 from app.db.session import get_db
 from app.models.analysis import Analysis
 from app.models.upload import Upload
@@ -23,6 +24,7 @@ async def create_analysis(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> AnalysisOut:
+    await enforce_demo_analysis_quota(db, user)
     upload = await db.get(Upload, payload.upload_id)
     if upload is None or upload.user_id != user.id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Upload not found")

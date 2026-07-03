@@ -2,6 +2,9 @@
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+// When true, the UI shows a one-click "Launch demo" flow instead of registration.
+export const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
 const TOKEN_KEY = "opspilot_token";
 
 export function getToken(): string | null {

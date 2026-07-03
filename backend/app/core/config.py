@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     upload_dir: str = Field(default="/data/uploads", alias="OPSPILOT_UPLOAD_DIR")
     max_upload_mb: int = 200
 
+    # Demo mode: one-click ephemeral sessions with seeded data, auto-reset via TTL.
+    # Registration is disabled and per-session AI usage is capped while enabled.
+    demo_mode: bool = Field(default=False, alias="OPSPILOT_DEMO_MODE")
+    demo_session_ttl_minutes: int = Field(default=45, alias="OPSPILOT_DEMO_TTL_MINUTES")
+    demo_max_analyses: int = Field(default=5, alias="OPSPILOT_DEMO_MAX_ANALYSES")
+    demo_max_chat_messages: int = Field(default=40, alias="OPSPILOT_DEMO_MAX_CHAT_MESSAGES")
+    demo_max_upload_mb: int = Field(default=5, alias="OPSPILOT_DEMO_MAX_UPLOAD_MB")
+
     # Database
     postgres_host: str = Field(default="localhost", alias="POSTGRES_HOST")
     postgres_port: int = Field(default=5432, alias="POSTGRES_PORT")

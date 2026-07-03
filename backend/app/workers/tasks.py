@@ -5,8 +5,10 @@ import logging
 import uuid
 from pathlib import Path
 
+from app.core.config import get_settings
 from app.models.upload import LogEvent, Upload
 from app.services.analysis.engine import run_analysis
+from app.services.demo.seed import purge_expired_demo_users
 from app.services.parsers.service import parse_file
 from app.services.rag.ingest import ingest_document
 from app.services.reports.generator import run_report
@@ -97,3 +99,17 @@ def ingest_document_task(
             )
 
     asyncio.run(_run())
+
+
+@celery_app.task(name="opspilot.purge_demo_sessions")
+def purge_demo_sessions_task() -> int:
+    """Periodic cleanup of expired demo sessions (registered on Celery beat)."""
+    settings = get_settings()
+    if not settings.demo_mode:
+        return 0
+
+    async def _run() -> int:
+        async with task_session() as db:
+            return await purge_expired_demo_users(db, settings.demo_session_ttl_minutes)
+
+    return asyncio.run(_run())

@@ -20,4 +20,17 @@ celery_app.conf.update(
     task_soft_time_limit=60 * 18,
     broker_connection_retry_on_startup=True,
     result_expires=60 * 60 * 24,
+    # Fail fast when publishing if the broker is briefly unreachable, so callers that
+    # enqueue best-effort work (e.g. demo seeding) fall back quickly instead of hanging.
+    broker_transport_options={"max_retries": 1},
+    task_publish_retry_policy={"max_retries": 1, "interval_start": 0, "interval_step": 0.2},
 )
+
+# In demo mode, sweep expired sessions every few minutes via Celery beat.
+if settings.demo_mode:
+    celery_app.conf.beat_schedule = {
+        "purge-demo-sessions": {
+            "task": "opspilot.purge_demo_sessions",
+            "schedule": 300.0,
+        }
+    }

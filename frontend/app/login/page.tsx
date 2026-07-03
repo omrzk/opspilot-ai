@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bot } from "lucide-react";
+import { Bot, Play, ShieldCheck } from "lucide-react";
 
-import { api, setToken } from "@/lib/api";
+import { api, DEMO_MODE, setToken } from "@/lib/api";
 import type { TokenResponse } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,6 +39,68 @@ export default function LoginPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function launchDemo() {
+    setError("");
+    setBusy(true);
+    try {
+      const res = await api<TokenResponse>("/api/v1/demo/start", { method: "POST" });
+      setToken(res.access_token);
+      router.replace("/");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not start demo");
+      setBusy(false);
+    }
+  }
+
+  if (DEMO_MODE) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="items-center text-center">
+            <Bot className="mb-2 h-10 w-10 text-primary" />
+            <CardTitle>OpsPilot AI — Live Demo</CardTitle>
+            <CardDescription>
+              A real, working instance pre-loaded with a simulated production incident.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                Your own sandboxed session — nothing you do is visible to anyone else.
+              </li>
+              <li className="flex gap-2">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                Seeded with real logs: SSH brute-force, Sysmon, Kubernetes and AWS CloudTrail.
+              </li>
+              <li className="flex gap-2">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                Everything resets automatically when your session ends.
+              </li>
+            </ul>
+            <Button className="w-full" size="lg" onClick={launchDemo} disabled={busy}>
+              <Play className="h-4 w-4" />
+              {busy ? "Provisioning your sandbox…" : "Launch demo"}
+            </Button>
+            {error && <p className="text-center text-sm text-red-400">{error}</p>}
+            <p className="text-center text-xs text-muted-foreground">
+              Powered by the open-source{" "}
+              <a
+                href="https://github.com/omrzk/opspilot-ai"
+                className="text-primary underline underline-offset-2"
+                target="_blank"
+                rel="noreferrer"
+              >
+                OpsPilot AI
+              </a>{" "}
+              project.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (

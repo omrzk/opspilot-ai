@@ -141,11 +141,19 @@ frontend/
 docs/              architecture, configuration, deployment, API
 ```
 
+## Demo mode
+
+OpsPilot can run as a public, self-service demo: visitors click **Launch demo** and get
+their own isolated, pre-seeded, auto-resetting session running the real product. Enable it
+with `OPSPILOT_DEMO_MODE=true` (backend) and `NEXT_PUBLIC_DEMO_MODE=true` (frontend). See
+[docs/demo-mode.md](docs/demo-mode.md).
+
 ## Documentation
 
 - [Architecture](docs/architecture.md)
 - [Configuration](docs/configuration.md)
 - [Deployment](docs/deployment.md)
+- [Demo mode](docs/demo-mode.md)
 - [API reference](docs/api.md) (interactive docs at `/docs` when running)
 
 ## Contributing

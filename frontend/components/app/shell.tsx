@@ -15,10 +15,11 @@ import {
   Upload,
 } from "lucide-react";
 
-import { api, getToken, setToken } from "@/lib/api";
+import { api, DEMO_MODE, getToken, setToken } from "@/lib/api";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -102,7 +103,17 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </Button>
         </div>
       </aside>
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <div className="flex min-w-0 flex-1 flex-col">
+        {DEMO_MODE && (
+          <div className="flex items-center justify-center gap-2 border-b bg-primary/10 px-4 py-1.5 text-xs text-foreground">
+            <Badge variant="info">Demo</Badge>
+            <span className="text-muted-foreground">
+              Sandboxed session with sample data — everything resets when your session ends.
+            </span>
+          </div>
+        )}
+        <main className="flex-1 overflow-y-auto">{children}</main>
+      </div>
     </div>
   );
 }
