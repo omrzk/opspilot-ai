@@ -1,5 +1,7 @@
 # OpsPilot AI
 
+![OpsPilot AI](docs/assets/banner.png)
+
 **The AI copilot for Systems Engineers, Cloud Engineers, Platform Engineers and Windows Administrators.**
 
 OpsPilot AI is more than a chat window in front of an LLM. It parses your real infrastructure data — Windows Event Logs, Sysmon, Defender, Azure, VMware, AWS CloudTrail, Kubernetes, syslog — reasons over it together with your runbooks and incident history (RAG over pgvector), and produces root-cause analyses, remediation scripts and finished incident documents.
