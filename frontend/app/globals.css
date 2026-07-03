@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 224 24% 6%;
+    --foreground: 213 20% 92%;
+    --card: 224 22% 9%;
+    --card-foreground: 213 20% 92%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 224 24% 6%;
+    --secondary: 222 18% 16%;
+    --secondary-foreground: 213 20% 92%;
+    --muted: 222 18% 14%;
+    --muted-foreground: 215 14% 62%;
+    --accent: 222 18% 18%;
+    --accent-foreground: 213 20% 92%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 16% 18%;
+    --input: 222 16% 22%;
+    --ring: 199 89% 48%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Rendered markdown (chat + reports) */
+.prose-ops {
+  @apply text-sm leading-relaxed;
+}
+.prose-ops h1 {
+  @apply mb-3 mt-5 text-xl font-semibold;
+}
+.prose-ops h2 {
+  @apply mb-2 mt-4 text-lg font-semibold;
+}
+.prose-ops h3 {
+  @apply mb-2 mt-3 text-base font-semibold;
+}
+.prose-ops p {
+  @apply mb-3;
+}
+.prose-ops ul {
+  @apply mb-3 list-disc pl-5;
+}
+.prose-ops ol {
+  @apply mb-3 list-decimal pl-5;
+}
+.prose-ops li {
+  @apply mb-1;
+}
+.prose-ops code {
+  @apply rounded bg-muted px-1 py-0.5 font-mono text-[0.85em];
+}
+.prose-ops pre {
+  @apply mb-3 overflow-x-auto rounded-md border bg-black/40 p-3;
+}
+.prose-ops pre code {
+  @apply bg-transparent p-0;
+}
+.prose-ops table {
+  @apply mb-3 w-full border-collapse text-left;
+}
+.prose-ops th,
+.prose-ops td {
+  @apply border border-border px-2 py-1;
+}
+.prose-ops blockquote {
+  @apply mb-3 border-l-2 border-primary/60 pl-3 text-muted-foreground;
+}
+.prose-ops a {
+  @apply text-primary underline underline-offset-2;
+}
