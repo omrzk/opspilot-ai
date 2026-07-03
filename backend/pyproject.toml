@@ -2,7 +2,7 @@
 name = "opspilot-ai"
 version = "0.1.0"
 description = "AI copilot for systems, cloud and platform engineers: log analysis, RAG, incident reports."
-readme = "../README.md"
+readme = "README.md"
 license = { text = "AGPL-3.0-or-later" }
 requires-python = ">=3.11"
 dependencies = [
