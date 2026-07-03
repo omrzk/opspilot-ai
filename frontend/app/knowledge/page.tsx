@@ -167,8 +167,8 @@ export default function KnowledgePage() {
                   <div className="truncate text-sm font-medium">{d.title}</div>
                   <div className="mt-1 flex gap-2">
                     <Badge variant="muted">{d.doc_type}</Badge>
-                    <Badge variant={d.status === "ready" ? "success" : "warning"}>
-                      {d.status}
+                    <Badge variant={d.status.startsWith("ready") ? "success" : "warning"}>
+                      {d.status === "ready_no_embeddings" ? "ready (no vectors)" : d.status}
                     </Badge>
                   </div>
                 </div>
