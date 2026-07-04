@@ -37,7 +37,8 @@ async function parseError(res: Response): Promise<never> {
   }
   if (res.status === 401 && typeof window !== "undefined") {
     setToken(null);
-    if (!window.location.pathname.startsWith("/login")) window.location.href = "/login";
+    const loginPath = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/login`;
+    if (!window.location.pathname.startsWith(loginPath)) window.location.href = loginPath;
   }
   throw new ApiError(res.status, detail);
 }
