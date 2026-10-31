@@ -1,6 +1,9 @@
 import json
 
+import pytest
+
 from app.services.parsers.formats import read_file
+from app.services.parsers.service import parse_file
 
 
 def test_json_array(tmp_path):
@@ -68,3 +71,39 @@ def test_unsupported_extension(tmp_path):
         raise AssertionError("expected ValueError")
     except ValueError:
         pass
+
+
+@pytest.mark.parametrize("key", ["Records", "records", "items", "events", "value"])
+def test_json_envelopes_skip_non_object_entries(tmp_path, key):
+    first = {"eventVersion": "1.08", "eventSource": "ec2.amazonaws.com",
+             "eventName": "RunInstances"}
+    second = {"eventVersion": "1.08", "eventSource": "ec2.amazonaws.com",
+              "eventName": "StopInstances"}
+    path = tmp_path / "mixed.json"
+    path.write_text(json.dumps({key: [first, None, 42, True, "noise", [], second]}))
+
+    fmt, records = read_file(path, path.name)
+    assert fmt == "json"
+    assert records == [first, second]
+    result = parse_file(path, path.name)
+    assert result.source_type == "cloudtrail"
+    assert [event.raw for event in result.events] == [first, second]
+    assert result.warnings == []
+
+
+@pytest.mark.parametrize("records", [[], [None], [None, {"message": "ok"}], [42], ["noise"]])
+def test_unrecognized_json_envelope_keeps_generic_object(tmp_path, records):
+    data = {"Records": records, "message": "metadata"}
+    path = tmp_path / "generic.json"
+    path.write_text(json.dumps(data))
+    assert read_file(path, path.name)[1] == [data]
+
+
+@pytest.mark.parametrize("wrapped", [False, True])
+def test_json_record_limit_applies_before_filtering(tmp_path, monkeypatch, wrapped):
+    monkeypatch.setattr("app.services.parsers.formats.MAX_RECORDS", 3)
+    records = [{"message": "first"}, None, {"message": "second"}, {"message": "beyond cap"}]
+    data = {"Records": records} if wrapped else records
+    path = tmp_path / "capped.json"
+    path.write_text(json.dumps(data))
+    assert read_file(path, path.name)[1] == [records[0], records[2]]
