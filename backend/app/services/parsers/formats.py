@@ -90,7 +90,7 @@ def read_json(path: Path) -> list[dict]:
         for key in ("Records", "records", "items", "events", "value"):
             inner = data.get(key)
             if isinstance(inner, list) and inner and isinstance(inner[0], dict):
-                return inner[:MAX_RECORDS]
+                return [r for r in inner[:MAX_RECORDS] if isinstance(r, dict)]
         return [data]
     return []
 
